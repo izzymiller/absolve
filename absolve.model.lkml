@@ -4,47 +4,42 @@ connection: "lookerdata_publicdata_standard_sql"
 include: "*.view"
 
 datagroup: absolve_default_datagroup {
-  # sql_trigger: SELECT MAX(id) FROM etl_log;;
   max_cache_age: "1 hour"
 }
 
 persist_with: absolve_default_datagroup
 
 
-explore: orders {
-  label: "(1) Orders, Items and Users"
-  view_name: orders
+explore: carbon_cruncher {
 
-  join: order_items {
+  join: carbon_cruncher_items {
+    fields: [carbon_cruncher.created_date,carbon_cruncher.created_month,carbon_cruncher_items.is_returned,carbon_cruncher_items.gross_margin,carbon_cruncher_items.total_gross_margin,carbon_cruncher_items.shipping_method,carbon_cruncher_items.shipping_time,carbon_cruncher_items.status]
     type: left_outer
-    sql_on: ${order_items.order_id} = ${orders.id} ;;
+    sql_on: ${carbon_cruncher_items.order_id} = ${carbon_cruncher.id} ;;
     relationship: one_to_many
   }
 
   join: inventory_items {
-    #Left Join only brings in items that have been sold as order_item
+    fields: []
     type: full_outer
     relationship: one_to_one
-    sql_on: ${inventory_items.id} = ${order_items.inventory_item_id} ;;
+    sql_on: ${inventory_items.id} = ${carbon_cruncher_items.inventory_item_id} ;;
   }
 
   join: users {
+    fields: []
     relationship: many_to_one
-    sql_on: ${order_items.user_id} = ${users.id} ;;
-  }
-
-  join: user_order_facts {
-    view_label: "Users"
-    relationship: many_to_one
-    sql_on: ${user_order_facts.user_id} = ${order_items.user_id} ;;
+    sql_on: ${carbon_cruncher_items.user_id} = ${users.id} ;;
   }
 
   join: products {
+    fields: []
     relationship: many_to_one
     sql_on: ${products.id} = ${inventory_items.product_id} ;;
   }
 
   join: distribution_centers {
+    fields: []
     type: left_outer
     sql_on: ${distribution_centers.id} = ${inventory_items.product_distribution_center_id} ;;
     relationship: many_to_one
