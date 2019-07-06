@@ -42,19 +42,20 @@ view: orders {
     drill_fields: [id, users.last_name, users.id, users.first_name, order_items.count]
   }
 
-  measure: total_ship_distance {
-    type: sum_distinct
-    sql: ${order_items.ship_distance} ;;
+  measure: total_order_lbs_mi {
+    type: sum
+    sql: ${order_facts.product_shipped_lbs_mi} ;;
   }
+
 
   measure: carbon_footprint {
     type: number
     label: "CO2e Footprint (kg)"
     sql:
-    (${total_ship_distance}*${products.total_weight})*
-    CASE WHEN ${order_items.shipping_method} = 'air' THEN 1.23205
-    WHEN ${order_items.shipping_method} = 'truck' THEN 0.11360
-    WHEN ${order_items.shipping_method} = 'boat' THEN 0.01614
+    ${total_order_lbs_mi}*
+    CASE WHEN ${carbon_cruncher_items.shipping_method} = 'air' THEN 1.23205
+    WHEN ${carbon_cruncher_items.shipping_method} = 'truck' THEN 0.11360
+    WHEN ${carbon_cruncher_items.shipping_method} = 'boat' THEN 0.01614
     ELSE null
     END;;
     tags: ["co2_footprint"]

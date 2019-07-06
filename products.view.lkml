@@ -16,6 +16,11 @@ view: products {
     sql: TRIM(${TABLE}.name) ;;
   }
 
+  dimension: weight {
+    type: number
+    sql: ${TABLE}.weight ;;
+  }
+
   dimension: brand {
     sql: TRIM(${TABLE}.brand) ;;
 
@@ -58,11 +63,6 @@ view: products {
     sql: ${TABLE}.distribution_center_id ;;
   }
 
-  dimension: weight {
-    type: number
-    sql: ${TABLE}.weight ;;
-  }
-
   ## MEASURES ##
 
   measure: count {
@@ -83,16 +83,16 @@ view: products {
     drill_fields: [category, detail2*, -category_count] # don't show because it will always be 1
   }
 
+  measure: total_weight {
+    type: sum
+    sql: ${weight} ;;
+  }
+
   measure: department_count {
     alias: [department.count]
     type: count_distinct
     sql: ${department} ;;
     drill_fields: [department, detail2*, -department_count] # don't show because it will always be 1
-  }
-
-  measure: total_weight {
-    type: sum
-    sql: ${weight} ;;
   }
 
   set: detail {

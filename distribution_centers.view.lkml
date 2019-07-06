@@ -1,5 +1,6 @@
 view: distribution_centers {
   sql_table_name: absolve.distribution_centers ;;
+
   dimension: location {
     type: location
     sql_latitude: ${TABLE}.latitude ;;

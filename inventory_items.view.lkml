@@ -1,5 +1,6 @@
 view: inventory_items {
   sql_table_name: absolve.inventory_items ;;
+  ## DIMENSIONS ##
 
   dimension: id {
     primary_key: yes
@@ -15,8 +16,9 @@ view: inventory_items {
 
   dimension_group: created {
     type: time
+    datatype: timestamp
     timeframes: [time, date, week, month, raw]
-    sql: ${TABLE}.created_at ;;
+    sql: CAST(${TABLE}.created_at AS TIMESTAMP) ;;
   }
 
   dimension: product_id {
@@ -27,8 +29,9 @@ view: inventory_items {
 
   dimension_group: sold {
     type: time
+    datatype: timestamp
     timeframes: [time, date, week, month, raw]
-    sql: ${TABLE}.sold_at ;;
+    sql: CAST(${TABLE}.sold_at AS timestamp) ;;
   }
 
   dimension: is_sold {
@@ -103,7 +106,6 @@ view: inventory_items {
   measure: count {
     type: count
     drill_fields: [detail*]
-    tags: ["co2_footprint"]
   }
 
   measure: number_on_hand {

@@ -1,4 +1,5 @@
 view: user_order_facts {
+
   derived_table: {
     sql: SELECT
         user_id
@@ -10,7 +11,7 @@ view: user_order_facts {
       FROM absolve.order_items
       GROUP BY user_id
        ;;
-      sql_trigger_value: SELECT 1 ;;
+    datagroup_trigger: absolve_default_datagroup
   }
 
   dimension: user_id {

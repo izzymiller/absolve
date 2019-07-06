@@ -1,5 +1,6 @@
 view: users {
   sql_table_name: absolve.users ;;
+  ## Demographics ##
 
   dimension: id {
     primary_key: yes
