@@ -27,6 +27,7 @@ view: carbon_cruncher {
   SUM(order_item_facts.item_lbs_mi) AS total_order_lbs_mi,SUM(order_item_facts.carbon_footprint) AS total_order_footprint
   FROM order_item_facts
   GROUP BY 1,2,3,4,5
+
  ;;
 
 datagroup_trigger: absolve_default_datagroup
