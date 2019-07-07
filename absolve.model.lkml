@@ -14,7 +14,7 @@ persist_with: absolve_default_datagroup
 
 #Base explores
 explore: order_items {
-  label: "(1) Orders, Items and Users"
+  label: "Order Items"
   view_name: order_items
 
   join: order_facts {

@@ -5,6 +5,7 @@ view: orders {
     primary_key: yes
     type: number
     sql: ${TABLE}.id ;;
+    label: "Order ID"
   }
 
   dimension: campaign {
