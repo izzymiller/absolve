@@ -70,18 +70,5 @@ measure: carbon_footprint {
   tags: ["co2_footprint"]
 }
 
-# measure: carbon_footprint {
-#   type: number
-#   label: "CO2e Footprint (kg)"
-#   sql:
-#   ${total_lbs_mi}*
-#   CASE WHEN ${shipping_method} = 'air' THEN 1.23205
-#   WHEN ${shipping_method} = 'truck' THEN 0.11360
-#   WHEN ${shipping_method} = 'boat' THEN 0.01614
-#   ELSE null
-#   END;;
-#   tags: ["co2_footprint"]
-# }
-
 
 }
