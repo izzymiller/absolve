@@ -1,4 +1,4 @@
-view: offsets {
+view: purchases {
   sql_table_name: purchase_data.purchases ;;
 
   dimension: electricity_in_kwh {
@@ -159,13 +159,20 @@ view: purchases__offset {
 }
 
 view: purchases__offset__latlng {
+  dimension: offset_location {
+    type: location
+    sql_latitude: ${x} ;;
+    sql_longitude: ${y} ;;
+  }
   dimension: x {
     type: number
+    hidden: yes
     sql: ${TABLE}.x ;;
   }
 
   dimension: y {
     type: number
+    hidden: yes
     sql: ${TABLE}.y ;;
   }
 }
