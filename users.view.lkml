@@ -11,12 +11,12 @@ view: users {
 
   dimension: first_name {
     hidden: yes
-    sql: INITCAP(${TABLE}.first_name) ;;
+    sql: ${TABLE}.first_name ;;
   }
 
   dimension: last_name {
     hidden: yes
-    sql: INITCAP(${TABLE}.last_name) ;;
+    sql:${TABLE}.last_name ;;
   }
 
   dimension: name {
