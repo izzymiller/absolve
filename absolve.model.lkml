@@ -71,4 +71,11 @@ explore: co2 {
     relationship: one_to_one
     sql_on: ${order_items.order_id} = ${carbon_cruncher.order_id} AND ${order_items.id} = ${carbon_cruncher.order_item_id} ;;
   }
+
+  join: orders {
+    view_label: "Orders"
+    type: left_outer
+    sql_on: ${orders.id} = ${order_items.order_id} ;;
+    relationship: many_to_one
+  }
 }

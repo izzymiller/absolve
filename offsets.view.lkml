@@ -1,5 +1,5 @@
 view: purchases {
-  sql_table_name: purchase_data.purchases ;;
+  sql_table_name: offset_purchases.purchases ;;
 
   dimension: electricity_in_kwh {
     type: number
@@ -18,6 +18,7 @@ view: purchases {
 
   dimension_group: estimated {
     type: time
+    datatype: epoch
     timeframes: [
       raw,
       time,
@@ -27,7 +28,7 @@ view: purchases {
       quarter,
       year
     ]
-    sql: ${TABLE}.estimated_at ;;
+    sql: CAST(${TABLE}.estimated_at/1000 AS int64) ;;
   }
 
   dimension: micro_rec_count {
@@ -52,6 +53,7 @@ view: purchases {
 
   dimension_group: purchased {
     type: time
+    datatype: epoch
     timeframes: [
       raw,
       time,
@@ -61,7 +63,7 @@ view: purchases {
       quarter,
       year
     ]
-    sql: ${TABLE}.purchased_at ;;
+    sql: CAST(${TABLE}.purchased_at/1000 AS int64) ;;
   }
 
   dimension: rec_cost_in_usd_cents {
@@ -84,21 +86,31 @@ view: purchases {
     sql: ${TABLE}.state ;;
   }
 
-  dimension: total_cost_in_usd_cents {
-    type: number
-    sql: ${TABLE}.total_cost_in_usd_cents ;;
+  measure: total_cost_in_usd {
+    type: sum
+    sql: ${TABLE}.total_cost_in_usd_cents/100 ;;
   }
 
-  dimension: transaction_cost_in_usd_cents {
-    type: number
+  measure: transaction_cost_in_usd_cents {
+    type: sum
     sql: ${TABLE}.transaction_cost_in_usd_cents ;;
+  }
+
+  measure: total_carbon_offset {
+    label: "Total Co2 offset (kg)"
+    type: sum
+    sql: ${equivalent_carbon_in_kg} ;;
   }
 
   measure: count {
     type: count
     drill_fields: []
   }
+
+
 }
+
+
 
 view: purchases__offset {
   dimension: available_carbon_in_kg {

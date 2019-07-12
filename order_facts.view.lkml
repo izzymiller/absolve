@@ -17,9 +17,23 @@ view: order_facts {
   }
   dimension: order_id {
     type: number
-    hidden: yes
+    hidden: no
     primary_key: yes
     sql: ${TABLE}.order_id ;;
+  }
+
+  dimension_group: created {
+    type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    sql: ${TABLE}.created_at ;;
   }
 
   dimension: items_in_order {
