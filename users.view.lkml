@@ -20,7 +20,7 @@ view: users {
   }
 
   dimension: name {
-    sql: ${first_name} || ' ' || ${last_name} ;;
+    sql: CONCAT(${first_name},' ',${last_name}) ;;
   }
 
   dimension: age {
