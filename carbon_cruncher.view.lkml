@@ -1,6 +1,6 @@
 view: carbon_cruncher {
-
   derived_table: {
+    datagroup_trigger: absolve_default_datagroup
     sql: WITH order_item_facts AS (SELECT
     order_items.order_id  AS order_id,
     order_items.id  AS order_items_id,
@@ -29,60 +29,56 @@ view: carbon_cruncher {
   SUM(order_item_facts.item_lbs_mi) AS total_order_lbs_mi,SUM(order_item_facts.carbon_footprint_kg) AS total_order_footprint
   FROM order_item_facts
   GROUP BY 1,2,3,4,5,6
-
  ;;
-
-datagroup_trigger: absolve_default_datagroup
   }
 
-dimension: order_id {
-  type: number
-  sql: ${TABLE}.order_id ;;
-  hidden: yes
-}
+  dimension: order_id {
+    type: number
+    sql: ${TABLE}.order_id ;;
+    hidden: yes
+  }
 
-dimension: order_item_id {
-  hidden: yes
-  type: number
-  sql: ${TABLE}.order_items_id
-  ;;
-}
+  dimension: order_item_id {
+    hidden: yes
+    type: number
+    sql: ${TABLE}.order_items_id;;
+  }
 
-dimension: shipping_method {
-  type: string
-  sql: ${TABLE}.shipping_method ;;
-}
+  dimension: shipping_method {
+    type: string
+    sql: ${TABLE}.shipping_method ;;
+  }
 
-dimension: order_level_lbs_mi {
-  type: number
-  sql: ${TABLE}.total_order_lbs_mi ;;
-}
+  dimension: order_level_lbs_mi {
+    type: number
+    sql: ${TABLE}.total_order_lbs_mi ;;
+  }
   dimension: order_level_footprint {
     type: number
     sql: ${TABLE}.total_order_footprint ;;
   }
 
-measure: total_lbs_mi {
-  type: sum
-  sql: ${TABLE}.item_lbs_mi ;;
-}
+  measure: total_lbs_mi {
+    type: sum
+    sql: ${TABLE}.item_lbs_mi ;;
+  }
 
-measure: total_tons_mi {
-  label: "Total ton-miles"
-  description: "a US short ton of freight traveling 1 mile, or a half ton of freight traveling two miles"
-  type: sum
-  sql: ${TABLE}.item_tons_mi/2000 ;;
-}
+  measure: total_tons_mi {
+    label: "Total ton-miles"
+    description: "a US short ton of freight traveling 1 mile, or a half ton of freight traveling two miles"
+    type: sum
+    sql: ${TABLE}.item_tons_mi/2000 ;;
+  }
 
-measure: carbon_footprint_backend {
-  label: "CO2e Footprint (kg) backend"
-  type: sum
-  hidden: no
-
-  sql: ${TABLE}.carbon_footprint;;
-  value_format_name: decimal_2
-  tags: ["co2_footprint"]
-}
+  measure: carbon_footprint_backend {
+    #Used to feed the HTML of carbon_footprint_with_tgm
+    type: sum
+    hidden: yes
+    sql: ${TABLE}.carbon_footprint;;
+    value_format_name: decimal_2
+    drill_fields: [order_level_lbs_mi]
+    tags: ["co2_footprint"]
+  }
 
   measure: carbon_footprint_with_tgm {
     label: "CO2e Footprint (kg)"
@@ -94,6 +90,7 @@ measure: carbon_footprint_backend {
         ${carbon_footprint_backend}
         {% endif %};;
     tags: ["co2_footprint"]
+    drill_fields: [order_level_lbs_mi]
     required_fields: [carbon_footprint_backend]
   }
 
