@@ -100,6 +100,7 @@ view: purchases {
     label: "Total Co2 offset (kg)"
     type: sum
     sql: ${equivalent_carbon_in_kg} ;;
+    drill_fields: [purchases__offset.name,purchases__offset.offset_type,purchases.state,purchases__offset__latlng.offset_location]
   }
 
   measure: count {
