@@ -74,12 +74,28 @@ measure: total_tons_mi {
   sql: ${TABLE}.item_tons_mi/2000 ;;
 }
 
-measure: carbon_footprint {
-  label: "CO2e Footprint (kg)"
+measure: carbon_footprint_backend {
+  label: "CO2e Footprint (kg) backend"
   type: sum
+  hidden: no
+
   sql: ${TABLE}.carbon_footprint;;
+  value_format_name: decimal_2
   tags: ["co2_footprint"]
 }
+
+  measure: carbon_footprint_with_tgm {
+    label: "CO2e Footprint (kg)"
+    type: string
+    html: {{carbon_footprint_backend._linked_value}} ;;
+    sql: {% if order_items.total_gross_margin._in_query %}
+    CONCAT(CAST(${carbon_footprint_backend} AS STRING),',',CAST(${order_items.total_gross_margin} AS STRING))
+         {% else %}
+        ${carbon_footprint_backend}
+        {% endif %};;
+    tags: ["co2_footprint"]
+    required_fields: [carbon_footprint_backend]
+  }
 
 
 
