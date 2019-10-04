@@ -19,7 +19,7 @@ It was created based on an ecommerce dataset, and calculates the carbon emission
 I would love for it to one day include more robust CO~2~e calculations— PR welcome!
 
 # Installation
-Installation is designed to be as easy as possible, but still requires a couple of steps. 
+Installation is designed to be as easy as possible, but still requires a lot of steps. I'm working on a way to make it more packaged and palatable.
 
 ## Action Hub
 A key component of absolve is the Action. For a high-level take on data actions, head to the [Looker Docs](https://looker.com/platform/actions). Essentially, they're a user-friendly way to send a webhook from Looker to a predetermined destination, with predefined form fields to facilitate some kind of... action! 
@@ -37,21 +37,44 @@ Make sure to generate an API key, add it to Looker, and ensure that Looker can t
 2. Create a new directory for absolve (`mkdir src/actions/absolve`)
 3. Place absolve.ts, test_absolve.ts, and leaf.svg from the downloaded `absolve/action` directory into the `/actionhub/src/actions/absolve` directory. I'm a chump so I do this in the UI
 4. Edit `/actions/src/actions/index.ts` to include a line `import "./absolve/absolve"`
-5. Redeploy your action hub— You're good to go!
+5. Redeploy your action hub. Now in the Looker Admin Panel > Actions, you should see the "Absolve" action appear under your custom action hub section.
+6. Open the settings of the Absolve action and fill them out:
+- Cloverly API Private Key: For this, you'll need to visit [cloverly.com](https://cloverly.com) and sign up for an account. Generate some API keys and add billing info if you want to actually start purchasing offsets. Enter your private API key here (it's secure!)
+- Use data pipeline: If you plan to install the cloud function and pipe data from cloverly back into Looker, type "yes" into this setting.
+- GCS bucket name: If you have selected "yes" for the data pipeline, you must provide the name of a Google Cloud Storage bucket that you'd like to use to write offset data to. The default is "carbon_bucket".
+- BQ DatasetID: If you have selected "yes" for the data pipeline, you must provide the name of a Bigquery Dataset where the offset data will be stored and queried from. The default is "offset_purchases".
+- BQ Table Name: If you have selected "yes" for the data pipeline, you must provide the name of a Bigquery table where you'd like the offset data to live. The default is "purchases".
 
+7. Save your settings and test the action hub! If you see "Action is configured correctly!", then you're in business and can move onto the LookML portion of the setup.
+
+## Setting up the Google Cloud Function
+Once you're all set up with the block, it's time to set up the Google Cloud Function that pipes offset information back to the DB. This is the module that speaks to [Cloverly](https://cloverly.com) and pushes the data back into Bigquery.
+
+This module is entirely optional— But you won't be able to visualize your offset information in Looker without it. 
+
+To set it up, you'll need to:
+
+0. Assuming you've cloned this repo if you haven't already
+1. Create a Google Cloud Storage bucket (I named mine carbon_bucket)
+2. Add that bucket name to the action settings from the Looker admin panel 
+3. Create a Bigquery dataset (I named mine offset_purchases) and add that to the action settings.
+4. Make sure to add the Bigquery connection the offset_purchases dataset is in to Looker, if it's not already. [Here are the Looker docs on connecting to BQ](https://docs.looker.com/setup-and-management/database-config/google-bigquery). You'll want to edit the 
+3. Install the gcloud SDK: https://cloud.google.com/sdk/install
+4. Navigate to the cloud_function directory (`cd absolve/cloud_function`)
+5. Deploy the cloud function. Using the MacOS gcloud SDK, I run ```gcloud beta functions deploy refresh_offset_data --runtime python37 --trigger-http --set-env-vars CL_PRIVATE_KEY=<your_cloverly_private_key_here>```
+6. The CLI will prompt you that it is "Deploying function (may take a while - up to 2 minutes)". Once it completes, you should see a whole mess of information including `status: ACTIVE`. This lets you know that deployment has succeeded and the cloud function is eagerly waiting to receive data.
 
 ## Setting up the Looker Block
-All of the LookML from the `block` subdirectory can be dragged and dropped into a new project in Looker. I've tried to standardize all field names, but you should go through them to make sure they match your database setup. **If you already have a model built out for your ecommerce store, I recommend exclusively importing the carbon_cruncher.view.lkml, offset.view.lkml, and offsets.model.lkml files, and then integrating carbon_cruncher into your existing explores using absolve.model.lkml as a template.**
+All of the LookML from the `block` subdirectory can be dragged and dropped into a new project in Looker. I've tried to standardize all field names, but you should go through them to make sure they match your database setup. **If you already have a model built out for your business, I recommend exclusively importing the carbon_cruncher.view.lkml, offset.view.lkml, and offsets.model.lkml files, and then integrating carbon_cruncher into your existing explores using absolve.model.lkml as a template.** There is a sample LookML dashboard in the directory (`business_pulse.dashboard.lkml`), but you may instead want to add tiles to existing dashboards using that as a template. 
 
 **Things you will need to change**
 - In carbon_cruncher.view.lkml, there is a derived table that will require manual updating to match your database setup. I'm working on making this simpler.
+- In offset.model.lkml, you'll need to edit the `connection` to reference your bigquery connection set up in step 4 above.
 - For carbon_cruncher.view.lkml to function, a shipping_method and a product_weight are required. The current product_weight setup is in lbs, but you can edit as you see fit— Just make sure to also alter the ton conversions accordingly. The product_weight field is the individual weight of each product in your inventory.
 - Each view's sql_table_name parameter on line 2 will require manual updating to match your database setup
 
-If you've installed this properly, you should be able to run queries on your carbon footprint by adding the CO~2~e Footprint (kg) measure to any query. That field (and any field tagged ["co2_footprint"] can be clicked on to activate the Absolve action and purchase offsets.
+If you've installed this properly, you should be able to run queries on your carbon footprint by adding the CO~2~e Footprint (kg) measure to any query. That field (and any field tagged ["co2_footprint"] can be clicked on to activate the Absolve action and purchase offsets. Once you start purchasing offsets, you'll start seeing that purchase information displayed on the same dashboard. 
 
-## Setting up the Google Cloud Function
-Once you're all set up with the block and the action, it's time to set up the Google Cloud Function that pipes offset information back to the DB. 
 
 
 # C0~2~ Calculations
