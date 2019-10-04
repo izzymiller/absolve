@@ -10,7 +10,7 @@ For support or questions about absolve, feel free to tweet @isidoremiller or ope
 
 Absolve is a three part tool composed of a Looker block, a Looker action, and a Google Cloud Function. Together, it lets you:
 - Visualize your company's carbon footprint using a Looker dashboard
-- Purchase carbon offsets directly from that dashboard
+- Purchase carbon offsets directly from that dashboard (using [Cloverly](https://cloverly.com)!)
 - Visualize those offsets in real time, on the same dashboard.
 
 <p align="center">
