@@ -1,15 +1,21 @@
 Absolve: A Looker carbon offset solution
 ====================================
-This document explains Absolve at a high level and how to install it. There are individual READMEs in the subfolders that explain the contents in further detail.
+This document explains Absolve at a high level and how to install it.
 
 For support or questions about absolve, feel free to tweet @isidoremiller or open an issue in the repo.
 
 # What is Absolve?
 
+
+
 Absolve is a three part tool composed of a Looker block, a Looker action, and a Google Cloud Function. Together, it lets you:
 - Visualize your company's carbon footprint using a Looker dashboard
 - Purchase carbon offsets directly from that dashboard
 - Visualize those offsets in real time, on the same dashboard.
+
+<p align="center">
+  <img src="https://i.imgur.com/wsRON1j.png" />
+</p>
 
 It was created based on an ecommerce dataset, and calculates the carbon emissions of shipping orders from distribution centers to user locations. No factors are taken into consideration besides:
 -Item weight
@@ -38,6 +44,7 @@ Make sure to generate an API key, add it to Looker, and ensure that Looker can t
 3. Place absolve.ts, test_absolve.ts, and leaf.svg from the downloaded `absolve/action` directory into the `/actionhub/src/actions/absolve` directory. I'm a chump so I do this in the UI
 4. Edit `/actions/src/actions/index.ts` to include a line `import "./absolve/absolve"`
 5. Redeploy your action hub. Now in the Looker Admin Panel > Actions, you should see the "Absolve" action appear under your custom action hub section.
+![Settings](https://i.imgur.com/2xeie5V.png)
 6. Open the settings of the Absolve action and fill them out:
 - Cloverly API Private Key: For this, you'll need to visit [cloverly.com](https://cloverly.com) and sign up for an account. Generate some API keys and add billing info if you want to actually start purchasing offsets. Enter your private API key here (it's secure!)
 - Use data pipeline: If you plan to install the cloud function and pipe data from cloverly back into Looker, type "yes" into this setting.
@@ -74,6 +81,7 @@ All of the LookML from the `block` subdirectory can be dragged and dropped into 
 - Each view's sql_table_name parameter on line 2 will require manual updating to match your database setup
 
 If you've installed this properly, you should be able to run queries on your carbon footprint by adding the CO~2~e Footprint (kg) measure to any query. That field (and any field tagged ["co2_footprint"] can be clicked on to activate the Absolve action and purchase offsets. Once you start purchasing offsets, you'll start seeing that purchase information displayed on the same dashboard. 
+![Absolve Form](https://i.imgur.com/wSQGmw9.png)
 
 
 
