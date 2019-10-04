@@ -31,10 +31,12 @@ Installation is designed to be as easy as possible, but still requires a lot of 
 A key component of absolve is the Action. For a high-level take on data actions, head to the [Looker Docs](https://looker.com/platform/actions). Essentially, they're a user-friendly way to send a webhook from Looker to a predetermined destination, with predefined form fields to facilitate some kind of... action! 
 
 We'll actually be actually deploying a custom action hub in order to run this action. If you already have a custom action hub set up, then installing absolve is simple and you can skip to the "Installing the absolve action" subsection.
+
 **If you do not want to do this yourself, you can clone [this repo](https://github.com/izzymiller/absolve_action_hub) and deploy an action hub running just absolve without editing anything.**
 
 ### Deploying a custom action hub
 Check out the official Looker guide to deploy a custom action hub [here](https://github.com/looker/actions/blob/master/docs/deploying.md).
+
 Make sure to generate an API key, add it to Looker, and ensure that Looker can talk to the action hub.
 
 ### Installing the Absolve action
@@ -46,6 +48,7 @@ Make sure to generate an API key, add it to Looker, and ensure that Looker can t
 5. Redeploy your action hub. Now in the Looker Admin Panel > Actions, you should see the "Absolve" action appear under your custom action hub section.
 ![Settings](https://i.imgur.com/2xeie5V.png)
 6. Open the settings of the Absolve action and fill them out:
+
 - Cloverly API Private Key: For this, you'll need to visit [cloverly.com](https://cloverly.com) and sign up for an account. Generate some API keys and add billing info if you want to actually start purchasing offsets. Enter your private API key here (it's secure!)
 - Use data pipeline: If you plan to install the cloud function and pipe data from cloverly back into Looker, type "yes" into this setting.
 - GCS bucket name: If you have selected "yes" for the data pipeline, you must provide the name of a Google Cloud Storage bucket that you'd like to use to write offset data to. The default is "carbon_bucket".
@@ -72,7 +75,11 @@ To set it up, you'll need to:
 6. The CLI will prompt you that it is "Deploying function (may take a while - up to 2 minutes)". Once it completes, you should see a whole mess of information including `status: ACTIVE`. This lets you know that deployment has succeeded and the cloud function is eagerly waiting to receive data.
 
 ## Setting up the Looker Block
-All of the LookML from the `block` subdirectory can be dragged and dropped into a new project in Looker. I've tried to standardize all field names, but you should go through them to make sure they match your database setup. **If you already have a model built out for your business, I recommend exclusively importing the carbon_cruncher.view.lkml, offset.view.lkml, and offsets.model.lkml files, and then integrating carbon_cruncher into your existing explores using absolve.model.lkml as a template.** There is a sample LookML dashboard in the directory (`business_pulse.dashboard.lkml`), but you may instead want to add tiles to existing dashboards using that as a template. 
+All of the LookML from the `block` subdirectory can be dragged and dropped into a new project in Looker. I've tried to standardize all field names, but you should go through them to make sure they match your database setup. 
+
+**If you already have a model built out for your business, I recommend exclusively importing the carbon_cruncher.view.lkml, offset.view.lkml, and offsets.model.lkml files, and then integrating carbon_cruncher into your existing explores using absolve.model.lkml as a template.** 
+
+There is a sample LookML dashboard in the directory (`business_pulse.dashboard.lkml`), but you may instead want to add tiles to existing dashboards using that as a template. 
 
 **Things you will need to change**
 - In carbon_cruncher.view.lkml, there is a derived table that will require manual updating to match your database setup. I'm working on making this simpler.
@@ -87,14 +94,20 @@ If you've installed this properly, you should be able to run queries on your car
 
 # C0<sub>2</sub> Calculations
 The carbon coefficients used to calculate emissions by freight type are sourced from the UK Government's [2019 emission conversion factor publication](https://www.gov.uk/government/collections/government-conversion-factors-for-company-reporting).  The full document is available for review at that link (big ol spreadsheets!) but when generalized (and I did generalize, heavily) it comes out to:
-Air Freight: 1.23205 kg Co<sub>2</sub>e per Ton-mile
-Truck Freight: 0.11360 kg Co<sub>2</sub>e per ton-mile
-Boat Freight: 0.01614 kg Co<sub>2</sub>e per Ton-mile
+
+- Air Freight: 1.23205 kg Co<sub>2</sub>e per Ton-mile
+- Truck Freight: 0.11360 kg Co<sub>2</sub>e per ton-mile
+- Boat Freight: 0.01614 kg Co<sub>2</sub>e per Ton-mile
+
 Yes, I know those units are preposterous. [The EDF uses them too](http://business.edf.org/blog/2015/03/24/green-freight-math-how-to-calculate-emissions-for-a-truck-move). It just means how many kg of Co<sub>2</sub>e are emitted to carry one ton of freight one mile.
 
 
 
 # Carbon Offsets
-Carbon offsets aren't perfect. Many would argue that they're useless and only serve to enable polluting behavior. I sit in a sort of in-between camp. [This article from Yale Climate Connections](https://www.yaleclimateconnections.org/2019/05/are-carbon-offsets-a-scam/) sums up my feelings pretty well— "It depends". I chose to use [Cloverly](https://cloverly.com) for this project. I hope they evaluate their choice of offsets carefully and purchase offsets that are real, ethical, and impactful.
+Carbon offsets aren't perfect. Many would argue that they're useless and only serve to enable polluting behavior. I sit in a sort of in-between camp. [This article from Yale Climate Connections](https://www.yaleclimateconnections.org/2019/05/are-carbon-offsets-a-scam/) sums up my feelings pretty well— "It depends". 
 
-You should always first reduce your impact. Offsets are supposed to be for the last little bit of the way that you couldn't get. Honestly, I feel that the power of this tool is less in the actual action taken, and more in the progress towards sustainable mindsets that it helps foster. If an organization installs absolve and gets used to seeing their carbon footprint as an integral part of their daily ecommerce dashboard, they will act more sustainably throughout their entire business. If they get used to using Looker to offset the small percentage of orders that max out a certain threshold, they'll take that into consideration when they see it offline. Change is incremental. Offsets can certainly be a driver of laziness— But I prefer to think of them as palatable motivators towards sustainable mindsets.
+I chose to use [Cloverly](https://cloverly.com) for this project. I hope they evaluate their choice of offsets carefully and purchase offsets that are real, ethical, and impactful.
+
+You should always first reduce your impact. Offsets are supposed to be for the last little bit of the way that you couldn't get. Honestly, I feel that the power of this tool is less in the actual action taken, and more in the progress towards sustainable mindsets that it helps foster. If an organization installs absolve and gets used to seeing their carbon footprint as an integral part of their daily ecommerce dashboard, they will act more sustainably throughout their entire business. If they get used to using Looker to offset the small percentage of orders that max out a certain threshold, they'll take that into consideration when they see it offline. 
+
+Change is incremental. Offsets can certainly be a driver of laziness— But I prefer to think of them as palatable motivators towards sustainable mindsets.
