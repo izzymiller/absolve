@@ -22,7 +22,7 @@ It was created based on an ecommerce dataset, and calculates the carbon emission
 -Item distance shipped
 -Item shipping method
 
-I would love for it to one day include more robust CO~2~e calculations— PR welcome!
+I would love for it to one day include more robust CO<sub>2</sub>e calculations— PR welcome!
 
 # Installation
 Installation is designed to be as easy as possible, but still requires a lot of steps. I'm working on a way to make it more packaged and palatable.
@@ -80,17 +80,17 @@ All of the LookML from the `block` subdirectory can be dragged and dropped into 
 - For carbon_cruncher.view.lkml to function, a shipping_method and a product_weight are required. The current product_weight setup is in lbs, but you can edit as you see fit— Just make sure to also alter the ton conversions accordingly. The product_weight field is the individual weight of each product in your inventory.
 - Each view's sql_table_name parameter on line 2 will require manual updating to match your database setup
 
-If you've installed this properly, you should be able to run queries on your carbon footprint by adding the CO~2~e Footprint (kg) measure to any query. That field (and any field tagged ["co2_footprint"] can be clicked on to activate the Absolve action and purchase offsets. Once you start purchasing offsets, you'll start seeing that purchase information displayed on the same dashboard. 
+If you've installed this properly, you should be able to run queries on your carbon footprint by adding the CO<sub>2</sub>e Footprint (kg) measure to any query. That field (and any field tagged ["co2_footprint"] can be clicked on to activate the Absolve action and purchase offsets. Once you start purchasing offsets, you'll start seeing that purchase information displayed on the same dashboard. 
 ![Absolve Form](https://i.imgur.com/wSQGmw9.png)
 
 
 
-# C0~2~ Calculations
+# C0<sub>2</sub> Calculations
 The carbon coefficients used to calculate emissions by freight type are sourced from the UK Government's [2019 emission conversion factor publication](https://www.gov.uk/government/collections/government-conversion-factors-for-company-reporting).  The full document is available for review at that link (big ol spreadsheets!) but when generalized (and I did generalize, heavily) it comes out to:
-Air Freight: 1.23205 kg Co~2~e per Ton-mile
-Truck Freight: 0.11360 kg Co~2~e per ton-mile
-Boat Freight: 0.01614 kg Co~2~e per Ton-mile
-Yes, I know those units are preposterous. [The EDF uses them too](http://business.edf.org/blog/2015/03/24/green-freight-math-how-to-calculate-emissions-for-a-truck-move). It just means how many kg of Co~2~e are emitted to carry one ton of freight one mile.
+Air Freight: 1.23205 kg Co<sub>2</sub>e per Ton-mile
+Truck Freight: 0.11360 kg Co<sub>2</sub>e per ton-mile
+Boat Freight: 0.01614 kg Co<sub>2</sub>e per Ton-mile
+Yes, I know those units are preposterous. [The EDF uses them too](http://business.edf.org/blog/2015/03/24/green-freight-math-how-to-calculate-emissions-for-a-truck-move). It just means how many kg of Co<sub>2</sub>e are emitted to carry one ton of freight one mile.
 
 
 
