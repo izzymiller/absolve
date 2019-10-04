@@ -1,10 +1,16 @@
-Absolve: A Looker carbon offset solution
-====================================
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/izzymiller/absolve/master/action/leaf.svg?sanitize=true" width="100" height="200" />
+</p>
+<p align="center">
+  <h1 align="center">Absolve: A Looker carbon offset solution</h1>
+</p>
 This document explains Absolve at a high level and how to install it.
 
 For support or questions about absolve, feel free to tweet @isidoremiller or open an issue in the repo.
 
 # What is Absolve?
+
 
 
 
