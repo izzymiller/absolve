@@ -63,6 +63,7 @@ explore: order_items {
 #Carbon Cruncher Explores
 
 explore: co2 {
+  hidden: yes
   label: "Carbon Cruncher"
   extends: [order_items]
   view_name: order_items
