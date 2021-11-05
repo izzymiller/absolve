@@ -14,6 +14,7 @@ persist_with: absolve_default_datagroup
 
 #Base explores
 explore: order_items {
+  group_label: "TSR Thesis - Ecommerce"
   label: "Order Items"
   view_name: order_items
 
