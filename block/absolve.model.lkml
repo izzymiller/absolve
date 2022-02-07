@@ -2,7 +2,7 @@ connection: "lookerdata_publicdata_standard_sql"
 
 # include all the views
 include: "*.view"
-
+include: "/**/*.dashboard"
 #Datagroups and caching
 datagroup: absolve_default_datagroup {
   max_cache_age: "5 hours"
