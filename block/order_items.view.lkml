@@ -31,8 +31,19 @@
       type: count_distinct
       drill_fields: [detail*]
       sql: ${order_id} ;;
+      html: {{ rendered_value }} || {{ list_test._rendered_value }} ;;
     }
 
+  measure: list_test {
+    type: list
+    list_field: products.item_name
+  }
+
+    measure: Dummie_order_count {
+      type: sum
+      drill_fields: [detail*]
+      sql: ${id};;
+    }
 
     measure: count_last_28d {
       label: "Count Sold in Trailing 28 Days"
@@ -176,11 +187,13 @@
     }
 
     measure: total_sale_price {
+      view_label: " Measures"
       type: sum
-      value_format_name: usd
-      sql: ${sale_price} ;;
+      value_format_name: decimal_0
+      sql:coalesce(${sale_price},0) ;;
       drill_fields: [detail*]
     }
+
 
     measure: total_gross_margin {
       type: sum

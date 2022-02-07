@@ -13,17 +13,8 @@ view: orders {
     sql: ${TABLE}.campaign ;;
   }
 
-  dimension_group: created {
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
-    ]
+  dimension: created {
+    type: string
     sql: ${TABLE}.created_at ;;
   }
 
