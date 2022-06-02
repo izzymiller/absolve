@@ -38,17 +38,27 @@
       label: "Count Sold in Trailing 28 Days"
       type: count_distinct
       sql: ${id} ;;
-      hidden: yes
-      filters:
-      {field:created_date
-        value: "28 days"
-      }}
+      hidden: no
+      # filters:{
+      #   field:created_date
+      #   value: "28 days"
+      # }
+      filters:{
+        field: status
+        value: "Processing"
+      }
+      }
 
     dimension: order_id {
       type: number
       hidden: yes
       sql: ${TABLE}.order_id ;;
     }
+
+      dimension: yesno {
+        type: yesno
+        sql: ${TABLE}.order_id > 2300 ;;
+      }
 
     ########## Time Dimensions ##########
 
@@ -66,16 +76,74 @@
 
     dimension_group: delivered {
       type: time
-      timeframes: [date, week, month, raw]
+      timeframes: [date, week, month, raw, month_name]
       sql: ${TABLE}.delivered_at ;;
     }
+
+    filter: candidate_name{
+      type: string
+      label: "candidate name"
+      suggestions: ["alejandro Ochoa", "Alain Silva", "Moises Campeas"]
+    }
+
+
+
+
+    # this has to be a field in your table from your DB i.e. ${Status}
 
     dimension_group: created {
       type: time
       datatype: timestamp
       timeframes: [time, hour, date, week, month, year, hour_of_day, day_of_week, month_num, month_name, raw, week_of_year]
-      sql: CAST(${TABLE}.created_at AS TIMESTAMP) ;;
+      sql: CAST(${TABLE}.created_at AS TIMESTAMP);;
     }
+
+
+      measure:created_by_click{
+        type: date
+        sql: ${created_date};;
+        # filters: {
+        #   field: ${status}
+        #   value: "Opened Email"
+        #   }
+      }
+
+
+
+    dimension: day_of_week_text{
+      case: {
+        when: {
+          sql: ${created_day_of_week} = "1" ;;
+          label: "Sunday"
+        }
+        when: {
+          sql: ${created_day_of_week} = "2" ;;
+          label: "Monday"
+        }
+        when: {
+          sql: ${created_day_of_week} = "3" ;;
+          label: "Tuesday"
+        }
+        when: {
+          sql: ${created_day_of_week} = "4" ;;
+          label: "Wednesday"
+        }
+        when: {
+          sql: ${created_day_of_week} = "5" ;;
+          label: "Thursday"
+        }
+        when: {
+          sql: ${created_day_of_week} = "6" ;;
+          label: "Friday"
+        }
+        when: {
+          sql: ${created_day_of_week} = "7" ;;
+          label: "Saturday"
+        }
+      }
+    }
+
+
 
     dimension: reporting_period {
       group_label: "Order Date"
@@ -108,6 +176,26 @@
     dimension: status {
       sql: ${TABLE}.status ;;
     }
+
+    dimension: whitespace_status {
+      type: string
+      sql: TRIM(CONCAT(${TABLE}.status, '       ')) ;;
+    }
+
+    dimension: whitespace_status_ID {
+      type: string
+      sql: TRIM(CONCAT('#', ${order_id}, ' ', ${whitespace_status})) ;;
+    }
+
+
+    dimension: status_case {
+      sql: CASE
+          WHEN ${TABLE}.order_id = 100 THEN TRIM(CONCAT('#', ${order_id}, ' ', ${whitespace_status}))
+          ELSE TRIM(CONCAT('#', ${order_id}, ' ', ${status}))
+          END ;;
+    }
+
+
 
     dimension: days_to_process {
       type: number
@@ -178,7 +266,7 @@
     measure: total_sale_price {
       type: sum
       value_format_name: usd
-      sql: ${sale_price} ;;
+      sql: coalesce(${sale_price},0) ;;
       drill_fields: [detail*]
     }
 
@@ -196,12 +284,21 @@
       drill_fields: [detail*]
     }
 
-    measure: median_sale_price {
-      type: median
-      value_format_name: usd
-      sql: ${sale_price} ;;
-      drill_fields: [detail*]
-    }
+    # measure: median_sale_price {
+    #   type: number
+    #   value_format_name: usd
+    #   # sql:  SELECT ${sale_price}, count(${sale_price}) FROM ( SELECT ${sale_price}, median(${sale_price}) as median );;
+    #   sql: MEDIAN (1.0*${sale_price}/${average_sale_price}) ;;
+    #   # 1.0*${sale_price}/sum(sale_price);;
+    #   drill_fields: [detail*]
+    # }
+
+    # measure: median_sale_price {
+    #   type: median
+    #   value_format_name: usd
+    #   sql: ${sale_price} ;;
+    #   drill_fields: [detail*]
+    # }
 
     measure: average_gross_margin {
       type: average
@@ -227,7 +324,8 @@
 
     dimension: is_returned {
       type: yesno
-      sql: ${returned_raw} IS NOT NULL ;;
+      # sql: ${returned_raw} IS NOT NULL ;;
+      sql: ${returned_raw} = "Yes";;
     }
 
     measure: returned_count {
@@ -253,7 +351,7 @@
     measure: return_rate {
       type: number
       value_format_name: percent_2
-      sql: 1.0 * ${returned_count} / nullif(${count},0) ;;
+      sql: 1.0 * ${returned_count} / nullif((${count}), 0) ;;
     }
 
 
@@ -404,6 +502,30 @@
     }
 
 
+        dimension: dummy_three {
+          case: {
+            when: {
+              label: "Count"
+              sql: 1=1 ;;
+            }
+            when: {
+              label: "Count Inventory Items"
+              sql: 1=1 ;;
+            }
+            when: {
+              label: "Count Orders"
+              sql: 1=1 ;;
+            }
+          }
+        }
+
+    measure: last_updated_date {
+      type: date
+      # sql: MAX(${TABLE}.created_at) ;;
+      sql: MAX(CAST(${TABLE}.created_at AS TIMESTAMP)) ;;
+      # CAST(${TABLE}.created_at AS TIMESTAMP)
+      convert_tz: no
+    }
 
 
 ########## Sets ##########

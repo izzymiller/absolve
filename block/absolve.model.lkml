@@ -11,12 +11,34 @@ datagroup: absolve_default_datagroup {
 
 persist_with: absolve_default_datagroup
 
+week_start_day: friday
 
 #Base explores
 explore: order_items {
   group_label: "TSR Thesis - Ecommerce"
   label: "Order Items"
   view_name: order_items
+
+  # access_filter: {
+  #   field: order_items.status
+  #   user_attribute: status
+  # }
+
+  # access_grant: can_view_financial_data {
+  #   user_attribute: status
+  #   allowed_values: [ "Cancelled" ]
+  # }
+
+
+  # sql_always_where: ${created_at}} <= ${last_updated_date}} ;;
+
+  # sql_always_where: ${absolve.created_at}} <= ${absolve.last_updated_date}} ;;
+
+  # always_filter: {
+  #   filters: [last_updated_date: "7 days"]
+  # }
+
+
 
   join: order_facts {
     view_label: "Orders"
@@ -63,7 +85,7 @@ explore: order_items {
 #Carbon Cruncher Explores
 
 explore: co2 {
-  hidden: yes
+  hidden: no
   label: "Carbon Cruncher"
   extends: [order_items]
   view_name: order_items

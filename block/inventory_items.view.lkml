@@ -36,7 +36,8 @@ view: inventory_items {
 
   dimension: is_sold {
     type: yesno
-    sql: ${sold_raw} is not null ;;
+    # sql: ${sold_raw} is not null ;;
+    sql: ${sold_raw} ;;
   }
 
   dimension: days_in_inventory {

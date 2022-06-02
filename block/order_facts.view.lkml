@@ -9,12 +9,16 @@ view: order_facts {
       column: user_id {field: order_items.user_id }
       column: created_at {field: order_items.created_raw}
       column: order_gross_margin {field: order_items.total_gross_margin}
+      # column: average_sale_price {field: order_items.average_sale_price}
+
       derived_column: order_sequence_number {
         sql: RANK() OVER (PARTITION BY user_id ORDER BY created_at) ;;
       }
     }
     datagroup_trigger: absolve_default_datagroup
   }
+  # `jn`
+
   dimension: order_id {
     type: number
     hidden: no
@@ -68,4 +72,20 @@ view: order_facts {
     type: yesno
     sql: ${order_sequence_number} = 1 ;;
   }
+
+  # dimension: average_sale_price {
+  #   type: average
+  #   value_format_name: usd
+  #   sql: ${sale_price} ;;
+  #   drill_fields: [detail*]
+  # }
+
+  # measure: median_sale_price {
+  #     type: median
+  #     value_format_name: usd
+  #     sql: ${average_sale_price} ;;
+  #     drill_fields: [detail*]
+  #   }
+
+
 }
