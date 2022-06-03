@@ -21,6 +21,10 @@ view: users {
 
   dimension: name {
     sql: CONCAT(${first_name},' ',${last_name}) ;;
+    link: {
+      label: "UserInfo"
+      url: "https://productday.dev.looker.com/explore/absolve/order_items?qid=kkPdHIgkeLYCAAND1SwLn9&toggle=vis"
+    }
   }
 
   dimension: age {

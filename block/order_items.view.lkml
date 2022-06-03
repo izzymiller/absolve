@@ -379,7 +379,7 @@
 
     measure: cohort_values_0 {
       type: count_distinct
-      hidden: yes
+      hidden: no
       sql: CASE WHEN {% parameter metric %} = 'Order Count' THEN ${id}
         WHEN {% parameter metric %} = 'Unique Users' THEN ${users.id}
         ELSE null

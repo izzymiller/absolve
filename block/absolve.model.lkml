@@ -62,6 +62,13 @@ explore: order_items {
 
 #Carbon Cruncher Explores
 
+explore:  derivate_table_Hannna {
+  hidden: yes
+  view_name: derived_table_hannacase
+}
+
+#Carbon Cruncher Explores
+
 explore: co2 {
   hidden: yes
   label: "Carbon Cruncher"
@@ -80,4 +87,7 @@ explore: co2 {
     sql_on: ${orders.id} = ${order_items.order_id} ;;
     relationship: many_to_one
   }
+
+
+
 }
